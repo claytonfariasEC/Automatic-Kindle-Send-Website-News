@@ -1,4 +1,6 @@
 import webbrowser
+from unicodedata import category
+
 import pyautogui
 
 
@@ -9,101 +11,67 @@ import pandas as pd
 import re
 import matplotlib.pyplot as plt
 
-### this is not complete code contact 7019832930
-class Webscraper:
+import requests
 
-	def __init__(self, url):
-		self.url = url
-		self.tags_each_place = []
-		self.more_pages()
+#page = requests.get('https://www.wired.com/category/culture/')
 
-	def more_pages(self):
+#print(page)
 
-		data = get(self.url)
-		f1 = open('all_things.txt', 'w')
-		soup = BeautifulSoup(data.content, "html.parser")
-		print("CURRENT PAGE URL IS:", self.url)
-		states = soup.find_all("div", class_="col-md-12 activities-and-listings")
-		cities = soup.find_all("div", class_="col-md-12 activities-and-listings")
-		states = list([self.url + state.get('href') + '/things-to-do' for i in states for state in
-		               i.find_all('a', href=re.compile('^/states/'))])
-		all_links = []
-		for each_state in cities, states:
-			for all_place in each_state:
-				all_links.append(all_place)
-				file = all_place.split('/')[-2]
-				f1.write(str(all_place + '\r\n'))
-				f2 = open('-links-things-to-do.txt', 'w')
-				f3 = open('-links-with-category-and-count.txt', 'w')
-
-				print("current page " + all_place)
-
-				each_place_url = get(all_place)
-				soup = BeautifulSoup(each_place_url.content, "html.parser")
-				catogaries = soup.find_all("div", class_="filter-xor")
-
-				total_bot = []
-				activity = []
-				countplace = []
-				for catogary_href in catogaries:
-					f3.write(str(catogary_href) + '\r\n')
-					tags_each_place = self.url + catogary_href.find('a').get('href')
-					f2.write(str(tags_each_place + '\r\n'))
-					activity.append(category)
-					count_places = catogary_href.text.split(' ')[-1].split('(')[-1].split(')
-					countplace.append(int(count_places))
-					city = tags_each_place.split('/')[4].replace('-', ' ').title()
-					each_tags = get(tags_each_place)
-					print('tags each place', tags_each_place)
-					soup = BeautifulSoup(each_tags.content, "html.parser")
-					place_name_tags = soup.find_all("li", class_="grid-item case02")
-					# f4 = open(f'{city}-{category}.txt', 'w')
-					brought_count = []
-					for place_details in place_name_tags:
-						place = place_details.find("div", class_="name")
-						# f4.write(str(place.text) + "\r\n")
-						if "Featured" not in place:
-							brought = place_details.find("span", class_="sold")
-							if brought != None:
-								brought_count.append(int(brought_co))
-
-					total_bot.append(sum(brought_count))
-				print(activity, countplace, total_bot)
-
-				for i in range(len(total_bot)):
-					if total_bot[i] == 0:
-						total_bot[i] = 1
-
-				dataset = list((activity, countplace, total_bot))
-				df = pd.DataFrame(data=dataset, columns=['Activities', 'Total_Count', 'Total_Bought'])
-
-				df['efficieny'] = 100 * (df['Total_Bought'] - df['Total_Count']) / df['Total_Bought']
-
-				print(df)
-				labels = activity
-				cat = total_bot
-				plt.pie(cat, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
-				plt.title(city, bbox={'facecolor': '0.8', 'pad': 5})
-				plt.draw()
-				plt.savefig(city+'.png')
-				plt.clf()
-				df.to_csv(city+".csv")
-				print("\n")
-Webscraper("===============")
+# Create a BeautifulSoup object
+#soup = BeautifulSoup(page.text, 'html.parser')
 
 
 
 
-chromedir= "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
-webbrowser.get(chromedir).open("https://www.wired.com/category/culture/")
-t = pyautogui.size()
-pyautogui.moveTo(100, 100, duration=0.1)
 
-while True:
+import time
+import feedparser
+import webbrowser
+import random
+feed = feedparser.parse("https://www.wired.com/feed/rss")
 
-    iconX, iconY = pyautogui.locateCenterOnScreen('icon.png')
-    pyautogui.moveTo(iconX, iconY, duration=0.25)
+# feed_title = feed['feed']['title']  # NOT VALID
+feed_entries = feed.entries
+
+flag = 1
+
+for entry in feed.entries:
+    if(flag == 5):
+        article_title = entry.title
+        article_link = entry.link
+        article_published_at = entry.published # Unicode string
+        article_published_at_parsed = entry.published_parsed # Time object
+        # article_author = entry.author  DOES NOT EXIST
+        content = entry.summary
+        #article_tags = entry.tags # DOES NOT EXIST
 
 
-print("TESTE.....")
+        print ("{}[{}]".format(article_title, article_link))
+        print (" - Published at:  {}".format(article_published_at))
+        # print ("Published by {}".format(article_author))
+        print(" - Content:  {}".format(content))
+        # print("catagory{}".format(article_tags))
 
+        #print("TESTE.....")
+
+        chromedir= "C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
+        webbrowser.get(chromedir).open(article_link)
+        t = pyautogui.size()
+        pyautogui.moveTo(100, 100, duration=0.1)
+
+
+        teste = False
+        while (teste == False):
+
+            teste = iconX, iconY = pyautogui.locateCenterOnScreen('icon.png')
+            pyautogui.moveTo(iconX, iconY, duration=0.25)
+            pyautogui.click()
+            pyautogui.moveTo(iconX-10, iconY+25, duration=0.25)
+            #time.sleep(5000)
+            pyautogui.click()
+
+    flag +=1
+    print("END THIS ONE")
+
+
+print("SAIDAAAAA:::::")
